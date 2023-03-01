@@ -1,0 +1,6 @@
+.vscode
+__pycache__
+.env
+files/downloads/datasets/*.7z
+files/extract/datasets/*
+!files/extract/datasets/readme.txt
