@@ -29,8 +29,8 @@ def create_app(config_class=Config):
     logger.info("Starting app")
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    CORS(app)
     app.config.from_mapping(
-        SECRET_KEY='dev',
         LOGGER=logger
     )
     app.config.from_object(config_class)
@@ -39,5 +39,8 @@ def create_app(config_class=Config):
     # register blueprints
     from app.controllers.datasets import dataset
     app.register_blueprint(dataset.datasets)
+    from app.controllers.samples import sample
+    app.register_blueprint(sample.samples)
+
 
     return app
