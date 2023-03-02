@@ -10,6 +10,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - name: Stopping old docker container
+      run: docker stop /hunter_flask || true
     - name: Removing old docker container
       run: docker rm /hunter_flask || true
     - name: Build docker images
