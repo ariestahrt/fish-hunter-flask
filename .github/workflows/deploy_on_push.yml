@@ -15,6 +15,6 @@ jobs:
     - name: Build docker images
       run: docker build -t fish-hunter-flask:1.0.0 .
     - name: Run docker
-      run: docker run -itd -p 8080:8080 --name hunter_flask fish-hunter-flask:1.0.0
+      run: docker run -itd -v /home/slave/fish-hunter-flask/.env:/fish-hunter/.env -p 8080:8080 --name hunter_flask fish-hunter-flask:1.0.0
     - name: Removing none tagged docker images
       run: docker rmi $(docker images | grep '<none>' | tr -s ' ' | cut -d ' ' -f 3) || true
