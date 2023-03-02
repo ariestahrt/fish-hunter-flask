@@ -4,4 +4,15 @@ validators
 python-dotenv
 boto3
 tweepy
+beautifulsoup4
 Pillow
+waitress
+flask
+selenium
+webdriver-manager
+flask-cors
+tinycss
+requests
+ngram
+lxml
+urllib3

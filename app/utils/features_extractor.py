@@ -1,7 +1,6 @@
 import json
 from app.utils.html_utils import *
 from app.utils.css_utils import *
-import xlsxwriter
 
 def get_dataset_features(dataset_path):
     # clean dataset
