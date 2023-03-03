@@ -18,5 +18,5 @@ jobs:
       run: rsync -av --progress . /home/slave/fish-hunter-flask --exclude .git
     - name: Change directory to /home/slave/fish-hunter-flask
       run: cd /home/slave/fish-hunter-flask
-    - name: Run the waitress-serve in background
-      run: waitress-serve --call 'app:create_app' &
+    - name: Run the waitress-serve in screen
+      run: screen -dmS waitress-serve waitress-serve --call 'app:create_app'
