@@ -9,14 +9,14 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@master
-    - name: Stopping old docker container
-      run: docker stop /hunter_flask || true
-    - name: Removing old docker container
-      run: docker rm /hunter_flask || true
-    - name: Build docker images
-      run: docker build -t fish-hunter-flask:1.0.0 .
-    - name: Run docker
-      run: docker run -itd -v /home/slave/fish-hunter-flask/.env:/fish-hunter/.env -p 8080:8080 --name hunter_flask fish-hunter-flask:1.0.0
-    - name: Removing none tagged docker images
-      run: docker rmi $(docker images | grep '<none>' | tr -s ' ' | cut -d ' ' -f 3) || true
+    - uses: actions/checkout@v3
+    - name: Kill waitress-serve process
+      run: pkill waitress-serve || true
+    - name: Kill chrome process
+      run: pkill chrome || true
+    - name: Copy all from current folder to /home/slave/fish-hunter-flask
+      run: cp -r . /home/slave/fish-hunter-flask
+    - name: Change directory to /home/slave/fish-hunter-flask
+      run: cd /home/slave/fish-hunter-flask
+    - name: Run the waitress-serve in background
+      run: waitress-serve --call 'app:create_app' &

@@ -16,6 +16,15 @@ RUN apt-get -y update
 # install 7zip
 RUN apt-get install -y p7zip-full
 
+# install nano
+RUN apt-get install -y nano
+
+# install screen
+RUN apt-get install -y screen
+
+# install sudo
+RUN apt-get install -y sudo
+
 # Magic happens
 RUN apt-get install -y google-chrome-stable
 
@@ -41,6 +50,7 @@ RUN python3 -m pip install urllib3
 
 EXPOSE 8080
 
-# CMD ["/bin/bash"]
+CMD ["/bin/bash"]
 
-CMD ["waitress-serve", "--call", "app:create_app"]
+# enable this if you want to run the app in the container
+# CMD ["waitress-serve", "--call", "app:create_app"]
