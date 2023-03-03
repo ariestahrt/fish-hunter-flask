@@ -36,6 +36,11 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     app.app_context().push()
 
+    # home page
+    @app.route('/')
+    def index():
+        return "Alive!"
+
     # register blueprints
     from app.controllers.datasets import dataset
     app.register_blueprint(dataset.datasets)
