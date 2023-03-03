@@ -14,8 +14,8 @@ jobs:
       run: pkill waitress-serve || true
     - name: Kill chrome process
       run: pkill chrome || true
-    - name: Copy all from current folder to /home/slave/fish-hunter-flask ignoring .git folder
-      run: cp -r . /home/slave/fish-hunter-flask --exclude .git
+    - name: Copy all from current folder to /home/slave/fish-hunter-flask exclude .git folder
+      run: rsync -av --progress . /home/slave/fish-hunter-flask --exclude .git
     - name: Change directory to /home/slave/fish-hunter-flask
       run: cd /home/slave/fish-hunter-flask
     - name: Run the waitress-serve in background
