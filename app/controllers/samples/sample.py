@@ -25,31 +25,16 @@ def create_sample():
     ref_dataset = data["ref_dataset"]
     language = data["language"]
     brands = data["brands"]
+
     # trim brands
     brands = [b.strip() for b in brands]
     details = data["details"]
 
     # GET DATASET INFO FROM MONGO
     ds = DATASETS.find_one({"_id": ObjectId(ref_dataset)})
-
-    # DOWNLOAD DATASET
-    s3_path = ds["folder_path"] + ".7z"
-    file_path = s3_download(s3_path)
-    
-    # EXTRACT DATASET
-    ds_path = extract_dataset(file_path)
-
-    # GET FEATURES
-    f_text, f_html, f_css = get_dataset_features(ds_path)
-
-    # SCREENSHOT
-    index_path = "file://"+ds_path+"/index.html"
-    screenshot_path = ds_path+"/screenshot.jpg"
-    logger.info("Taking screenshot to {}", screenshot_path)
-    screenshot(index_path, screenshot_path)
-
-    # UPLOAD SCREENSHOT TO S3
-    s3_upload("fh-ss-images", local_file=ds_path+"/screenshot.jpg", dest=f"valid_fish/{str(ds['_id'])}.jpg")
+    f_text = ds["features"]["text"]
+    f_css = ds["features"]["css"]
+    f_html = ds["features"]["html"]
     
     # ADD TO MONGO
     SAMPLES.insert_one({
@@ -64,7 +49,7 @@ def create_sample():
             "css": f_css,
             "html": f_html
         },
-        "screenshot_path": "https://fh-ss-images.s3.ap-southeast-1.amazonaws.com/valid_fish/"+str(ds['_id'])+".jpg",
+        "screenshot_path": ds["screenshot_path"],
         "created_at": datetime.now(),
         "updated_at": None,
         "deleted_at": None
