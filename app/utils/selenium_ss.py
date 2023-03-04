@@ -11,6 +11,14 @@ options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.add_argument('--disable-javascript')
+# disable cors
+options.add_argument('--disable-web-security')
+options.add_argument('--allow-running-insecure-content')
+options.add_argument('--allow-insecure-localhost')
+options.add_argument('--allow-file-access-from-files')
+options.add_argument('--allow-file-access')
+options.add_argument('--allow-cross-origin-auth-prompt')
+options.add_experimental_option("prefs", {"profile.managed_default_content_settings.javascript": 2})
 
 driver = webdriver.Chrome(service=Service("/usr/local/bin/chromedriver"), options=options)
 

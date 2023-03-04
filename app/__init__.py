@@ -27,6 +27,8 @@ logger = logging.getLogger(__name__)
 
 def create_app(config_class=Config):
     logger.info("Starting app")
+
+    # flask with https
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
@@ -46,6 +48,5 @@ def create_app(config_class=Config):
     app.register_blueprint(dataset.datasets)
     from app.controllers.samples import sample
     app.register_blueprint(sample.samples)
-
 
     return app

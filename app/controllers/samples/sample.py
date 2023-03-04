@@ -71,7 +71,7 @@ def create_sample():
     })
 
     # create api request to validate ds
-    requests.post("http://localhost:5000/api/v1/datasets/" + ref_dataset, json={"status": "valid", "is_tweeted": True})
+    requests.post("http://localhost:8080/api/v1/datasets/" + ref_dataset, json={"status": "valid", "is_tweeted": True})
 
     # convert to json
     return json.dumps({

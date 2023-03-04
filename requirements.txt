@@ -16,3 +16,7 @@ requests
 ngram
 lxml
 urllib3
+scikit-learn
+pandas
+numpy
+langdetect
