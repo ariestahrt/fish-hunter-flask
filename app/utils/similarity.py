@@ -292,13 +292,13 @@ def calculate_dict_similarity(dict1, dict2):
     #     print()
 
     # calculate similarity
-    by_default = match / total
+    by_default = match / total if total > 0 else 0
 
     # print("match", match)
     # print("len(dict1)", len_dict1)
     # print("len(dict2)", len_dict2)
 
-    by_dice = 2 * match / (len_dict1 + len_dict2)
+    by_dice = 2 * match / (len_dict1 + len_dict2) if (len_dict1 + len_dict2) > 0 else 0
 
     return by_default, by_dice
 

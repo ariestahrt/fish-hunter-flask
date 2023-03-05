@@ -48,5 +48,7 @@ def create_app(config_class=Config):
     app.register_blueprint(dataset.datasets)
     from app.controllers.samples import sample
     app.register_blueprint(sample.samples)
+    from app.controllers.chrome_api import chrome_api
+    app.register_blueprint(chrome_api.chrome_api)
 
     return app

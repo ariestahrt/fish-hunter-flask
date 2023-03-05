@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import current_app
 from flask import request
 from datetime import datetime
-import json
+import json, shutil
 from datetime import datetime
 from uuid import uuid4
 from langdetect import detect
@@ -21,8 +21,15 @@ chrome_api = Blueprint('chrome_api', __name__, url_prefix='/api/v1/chrome_api')
 DB = current_app.config["DB"]
 SAMPLES = DB["samples"]
 DATASETS = DB["datasets"]
-    
 
+# enable CORS
+@chrome_api.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', '*')
+    return response
+    
 @chrome_api.route("/scan", methods=['POST'])
 def scan():
     logger.info("Scanning website")
@@ -30,6 +37,9 @@ def scan():
 
     url = data["url"]
     html_dom = data["html_dom"]
+
+    logger.info("URL: " + url)
+    logger.info("HTML DOM: " + str(html_dom))
 
     # generate eventid
     eventid = datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
@@ -52,6 +62,9 @@ def scan():
 
     # Compare the features of the website with the features that we have in the database
     similarity_res = calculate_similarity(f_text, f_html, f_css, lang)
+
+    # Remove the temp folder
+    shutil.rmtree(temp_path)
 
     return json.dumps({
         "status": "success",
