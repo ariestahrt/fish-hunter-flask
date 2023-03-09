@@ -287,13 +287,6 @@ def save_html(url, html_content="", saved_path="result"):
     create_dir(saved_path)
     create_dir(normalize_path(saved_path+"/assets"))
 
-    parsed = urlparse(url)
-    base_url = parsed.scheme + "://" + parsed.netloc + "/"
-    file_path = os.path.normpath(parsed.path[:parsed.path.rfind("/")+1]).replace("\\", "/") + "/"
-    if len(file_path) > 0: file_path = file_path[1:]
-    logs("[!] base_url", base_url)
-    logs("[!] file_path", file_path)
-
     if html_content == "": html_content = get_content(url).text
     
     # Write HTML first
@@ -307,12 +300,12 @@ def save_html(url, html_content="", saved_path="result"):
 
     for element in elements:
         # get the value of the "src" or "href" attribute
-        url = element.get("src") or element.get("href")
+        source_url = element.get("src") or element.get("href")
 
         # check if the URL is relative
-        if url and not urlparse(url).netloc:
+        if source_url and not urlparse(source_url).netloc:
             # construct the full URL using the base URL of the HTML page
-            full_url = urljoin(base_url, url)
+            full_url = urljoin(url, source_url)
 
             # replace the relative URL with the full URL
             if element.get("src"):
