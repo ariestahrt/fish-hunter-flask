@@ -1,4 +1,4 @@
-import json
+import json, os
 from app.utils.html_utils import *
 from app.utils.css_utils import *
 
@@ -16,6 +16,9 @@ def get_dataset_features(dataset_path):
     css_dict = get_css_from_html(html_clean, html_root=dataset_path+"/")
     
     # Save clean css to assets/__clean__.css
+    # make sure the directory exists
+    if not os.path.exists(dataset_path+"/assets/"):
+        os.makedirs(dataset_path+"/assets/")
     convert_cssdict_to_cssfile(css_dict, save_to=dataset_path+"/assets/__clean__.css")
     
     # Rebuild html with only-used css
