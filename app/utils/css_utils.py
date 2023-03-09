@@ -81,6 +81,7 @@ def extract_css_propval_from_file(file_path):
     return css_propval
 
 def convert_cssdict_to_cssfile(css_dict, save_to="css_fixed.css"):
+    with open(save_to, "w") as f: f.write("") # Clear file
     for selector in css_dict.keys():
         props_value = ""
         for props in css_dict[selector].keys():

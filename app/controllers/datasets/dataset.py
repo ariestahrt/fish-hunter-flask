@@ -75,8 +75,8 @@ def update_dataset(ref_dataset):
         "data": "ok"
     })
 
-@datasets.route('/scan/<ref_dataset>', methods=['GET'])
-def scan_dataset(ref_dataset):
+@datasets.route('/scan/<ref_dataset>/<validate>', methods=['GET'])
+def scan_dataset(ref_dataset, validate):
     logger.info("Scanning dataset")
     ds = DATASETS.find_one({"_id": ObjectId(ref_dataset)})
 
@@ -89,14 +89,17 @@ def scan_dataset(ref_dataset):
     # calculate similarity
     similarity_res = calculate_similarity(f_text, f_html, f_css, lang)
 
-    if similarity_res["final_score"] > MINIMUM_SCORE:
-        # update dataset info
-        requests.get(f"http://localhost:8080/api/v1/datasets/{ref_dataset}", json={
-            "status": "valid",
-            "is_tweeted": True
-        })
+    if validate == "true":
+        if similarity_res["final_score"] > MINIMUM_SCORE:
+            # update dataset info
+            requests.get(f"http://localhost:8080/api/v1/datasets/{ref_dataset}", json={
+                "status": "valid",
+                "is_tweeted": True
+            })
     
     return json.dumps({
         "status": "success",
-        "data": "ok"
+        "data": {
+            "similarity": similarity_res
+        }
     })
