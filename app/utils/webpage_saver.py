@@ -8,6 +8,7 @@ from urllib3 import disable_warnings
 import validators
 disable_warnings(InsecureRequestWarning)
 import logging
+from bs4 import BeautifulSoup
 
 def logs(*arg):
     return
@@ -279,6 +280,49 @@ def save_webpage(url, html_content="", saved_path="result"):
     assets_ok = [x for x in assets_list if "status_code" in x.keys() and x['status_code'] == 200]
     if len(assets_list) == 0: return 1.0
     return float(len(assets_ok)/len(assets_list))
+
+def save_html(url, html_content="", saved_path="result"):
+    logging.info("SAVING HTML {}", url)
+    remove_dir(saved_path)
+    create_dir(saved_path)
+    create_dir(normalize_path(saved_path+"/assets"))
+
+    parsed = urlparse(url)
+    base_url = parsed.scheme + "://" + parsed.netloc + "/"
+    file_path = os.path.normpath(parsed.path[:parsed.path.rfind("/")+1]).replace("\\", "/") + "/"
+    if len(file_path) > 0: file_path = file_path[1:]
+    logs("[!] base_url", base_url)
+    logs("[!] file_path", file_path)
+
+    if html_content == "": html_content = get_content(url).text
+    
+    # Write HTML first
+    html_file = normalize_path(saved_path+"/index.html")
+    with open(html_file, "w", encoding='utf-8') as f: f.write(html_content)
+
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    # find all HTML elements with an "src" or "href" attribute
+    elements = soup.find_all(["img", "link", "script"])
+
+    for element in elements:
+        # get the value of the "src" or "href" attribute
+        url = element.get("src") or element.get("href")
+
+        # check if the URL is relative
+        if url and not urlparse(url).netloc:
+            # construct the full URL using the base URL of the HTML page
+            full_url = urljoin(base_url, url)
+
+            # replace the relative URL with the full URL
+            if element.get("src"):
+                element["src"] = full_url
+            elif element.get("href"):
+                element["href"] = full_url
+
+    # save the modified HTML file
+    with open(html_file, "w") as file:
+        file.write(str(soup))
 
 if __name__ == "__main__":
     None

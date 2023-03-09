@@ -12,7 +12,7 @@ from app.utils.s3 import s3_download, s3_upload
 from app.utils.sevenzip import extract_dataset
 from app.utils.selenium_ss import screenshot
 from app.utils.features_extractor import get_dataset_features
-from app.utils.webpage_saver import save_webpage
+from app.utils.webpage_saver import save_html
 from app.utils.similarity_calculator import calculate_similarity
 import requests
 
@@ -51,8 +51,7 @@ def scan():
     # create temp folder
     os.makedirs(temp_path)
     # save the webpage
-    with open(f"{temp_path}index.html", "w") as f:
-        f.write(html_dom)
+    save_html(url, html_content=html_dom, saved_path=temp_path)
 
     # TODO: Extract features from the website
     # extract features
