@@ -21,4 +21,4 @@ jobs:
     - name: Install requirements
       run: docker exec fhf pip install -r requirements.txt
     - name: Run flask app in screen session
-      run: docker exec -itd fhf screen -dmS waitress-serve waitress-serve --call 'app:create_app' &
+      run: docker exec fhf screen -dmS waitress-serve waitress-serve --call 'app:create_app' > /dev/null 2>&1 &
