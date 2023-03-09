@@ -5,11 +5,7 @@ from datetime import datetime
 import json, shutil, requests
 
 from bson.objectid import ObjectId
-from app.utils.s3 import s3_download, s3_upload
-from app.utils.sevenzip import extract_dataset
-from app.utils.selenium_ss import screenshot
 from app.utils.twitter import tweet
-from app.utils.features_extractor import get_dataset_features
 from app.utils.similarity_calculator import calculate_similarity
 
 logger = current_app.config["LOGGER"]

@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import current_app
 from flask import request
 from datetime import datetime
-import json, shutil
+import json, shutil, os
 from datetime import datetime
 from uuid import uuid4
 from langdetect import detect
@@ -44,11 +44,15 @@ def scan():
     # generate eventid
     eventid = datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
 
-    # TODO: Check if url is in whitelist
+    # TODO: Check if url is in allow-list
     
     # save the page
     temp_path = f"files/chrome-api/{eventid}/"
-    save_webpage(url, html_content=html_dom, saved_path=temp_path)
+    # create temp folder
+    os.makedirs(temp_path)
+    # save the webpage
+    with open(f"{temp_path}index.html", "w") as f:
+        f.write(html_dom)
 
     # TODO: Extract features from the website
     # extract features
