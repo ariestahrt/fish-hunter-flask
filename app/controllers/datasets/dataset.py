@@ -4,6 +4,7 @@ from flask import request
 from flask import jsonify
 from datetime import datetime
 import json, shutil, requests
+import pymongo
 
 from bson.objectid import ObjectId
 from app.utils.twitter import tweet
@@ -114,25 +115,74 @@ def scan_dataset(ref_dataset, validate):
     })
 
 @datasets.route('', methods=['GET'])
+@jwt_required()
 def get_datasets():
     logger.info("Getting datasets")
     # Pagination parameters
+    draw = int(request.args.get('draw'))
     page = int(request.args.get('page'))
     page_size = int(request.args.get('page_size'))
+
+    search = request.args.get('search[value]')
     offset = (page - 1) * page_size
 
+    # Get the columns
+    col_idx = 0
+    while True:
+        if request.args.get(f'columns[{col_idx}][data]') == None:
+            break
+        col_idx += 1
+    
+    columns = []
+    for i in range(col_idx):
+        columns.append({
+            "data": request.args.get(f'columns[{i}][data]') if request.args.get(f'columns[{i}][data]') != "" else None,
+            "name": request.args.get(f'columns[{i}][name]'),
+            "searchable": True if request.args.get(f'columns[{i}][searchable]') == "true" else False,
+            "orderable": True if request.args.get(f'columns[{i}][orderable]') == "true" else False,
+            "search_value": request.args.get(f'columns[{i}][search][value]'),
+            "search_regex": True if request.args.get(f'columns[{i}][search][regex]') == "true" else False,
+        })
+
+    # Get the order
+    order_idx = 0
+    while True:
+        if request.args.get(f'order[{order_idx}][column]') == None:
+            break
+        order_idx += 1
+    
+    order = []
+    for i in range(order_idx):
+        order.append({
+            "column": int(request.args.get(f'order[{i}][column]')),
+            "dir": request.args.get(f'order[{i}][dir]')
+        })
+
+    print(json.dumps(columns, indent=4))
+
+    # create the query
+    search_criteria = {
+        "$or": [{ col["data"]: { "$regex": search, "$options": "i" } } for col in columns if col["searchable"] and col["data"] != None]
+    }
+
+    print(json.dumps(search_criteria, indent=4))
     # Get the total number of records
-    total_records = DATASETS.count_documents({})
+    records_total = DATASETS.count_documents({})
+    records_filtered = DATASETS.count_documents(search_criteria)
 
     # Get the data for the current page
-    data = DATASETS.find({}, {'whois_lookup_text': 0}).skip(offset).limit(page_size)
+    data = DATASETS.find(search_criteria, {'whois_lookup_text': 0}).skip(offset).limit(page_size)
+    
+    # sort the data
+    for o in order:
+        data = data.sort(columns[o["column"]]["data"], pymongo.DESCENDING if o["dir"] == "desc" else pymongo.ASCENDING)
 
     # Create the response object
     response = {
         'data': list(data),
-        'page': page,
-        'page_size': page_size,
-        'total_records': total_records
+        'draw': draw,
+        'recordsFiltered' : records_filtered,
+        'recordsTotal': records_total,
     }
 
     return json.dumps(response, default=str)
