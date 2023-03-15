@@ -8,11 +8,9 @@ from uuid import uuid4
 from langdetect import detect
 
 from bson.objectid import ObjectId
-from app.utils.s3 import s3_download, s3_upload
-from app.utils.sevenzip import extract_dataset
-from app.utils.selenium_ss import screenshot
-from app.utils.features_extractor import get_dataset_features
-from app.utils.webpage_saver import save_html
+from FishHunterUtil.selenium_ss import screenshot
+from FishHunterUtil.features_extractor import get_dataset_features
+from WebPageClone import save_html
 from app.utils.similarity_calculator import calculate_similarity
 import requests
 

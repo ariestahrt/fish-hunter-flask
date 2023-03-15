@@ -1,6 +1,8 @@
 import json
 from flask import current_app
-from app.utils.similarity import calculate_dict_similarity, lcs, ngram_similarity, NGramOri, cosine_similarity, calculate_by_lcs
+from FishHunterUtil.similarity import calculate_dict_similarity, lcs, ngram_similarity, cosine_similarity, calculate_by_lcs
+from ngram import NGram as NGramOri
+
 
 logger = current_app.config["LOGGER"]
 
