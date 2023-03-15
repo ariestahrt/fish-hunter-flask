@@ -114,7 +114,6 @@ def scan_dataset(ref_dataset, validate):
     })
 
 @datasets.route('', methods=['GET'])
-@jwt_required()
 def get_datasets():
     logger.info("Getting datasets")
     # Pagination parameters
@@ -126,7 +125,7 @@ def get_datasets():
     total_records = DATASETS.count_documents({})
 
     # Get the data for the current page
-    data = DATASETS.find({}, {'_id': 0}).skip(offset).limit(page_size)
+    data = DATASETS.find({}, {'whois_lookup_text': 0}).skip(offset).limit(page_size)
 
     # Create the response object
     response = {
@@ -136,4 +135,4 @@ def get_datasets():
         'total_records': total_records
     }
 
-    return jsonify(response)
+    return json.dumps(response, default=str)
