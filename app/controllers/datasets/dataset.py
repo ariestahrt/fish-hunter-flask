@@ -114,9 +114,9 @@ def scan_dataset(ref_dataset, validate):
         }
     })
 
-@datasets.route('', methods=['GET'])
+@datasets.route('/<status>', methods=['GET'])
 @jwt_required()
-def get_datasets():
+def get_datasets(status):
     logger.info("Getting datasets")
     # Pagination parameters
     draw = int(request.args.get('draw'))
@@ -158,16 +158,14 @@ def get_datasets():
             "dir": request.args.get(f'order[{i}][dir]')
         })
 
-    print(json.dumps(columns, indent=4))
-
     # create the query
     search_criteria = {
+        "status": status,
         "$or": [{ col["data"]: { "$regex": search, "$options": "i" } } for col in columns if col["searchable"] and col["data"] != None]
     }
 
-    print(json.dumps(search_criteria, indent=4))
     # Get the total number of records
-    records_total = DATASETS.count_documents({})
+    records_total = DATASETS.count_documents({"status": status})
     records_filtered = DATASETS.count_documents(search_criteria)
 
     # Get the data for the current page
