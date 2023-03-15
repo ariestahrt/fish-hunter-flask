@@ -1,12 +1,14 @@
 from flask import Blueprint
 from flask import current_app
 from flask import request
+from flask import jsonify
 from datetime import datetime
 import json, shutil, requests
 
 from bson.objectid import ObjectId
 from app.utils.twitter import tweet
 from app.utils.similarity_calculator import calculate_similarity
+from flask_jwt_extended import jwt_required
 
 logger = current_app.config["LOGGER"]
 datasets = Blueprint('datasets', __name__, url_prefix='/api/v1/datasets')
@@ -21,7 +23,13 @@ def before_request():
     logger.info("Before request in datasets")
     # TODO: Implement JWT Check
 
+@datasets.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    return "Hellow"
+
 @datasets.route('/<ref_dataset>', methods=['POST'])
+@jwt_required()
 def update_dataset(ref_dataset):
     logger.info("Validating dataset")
     data = request.get_json()
@@ -76,6 +84,7 @@ def update_dataset(ref_dataset):
     })
 
 @datasets.route('/scan/<ref_dataset>/<validate>', methods=['GET'])
+@jwt_required()
 def scan_dataset(ref_dataset, validate):
     logger.info("Scanning dataset")
     ds = DATASETS.find_one({"_id": ObjectId(ref_dataset)})
@@ -103,3 +112,28 @@ def scan_dataset(ref_dataset, validate):
             "similarity": similarity_res
         }
     })
+
+@datasets.route('', methods=['GET'])
+@jwt_required()
+def get_datasets():
+    logger.info("Getting datasets")
+    # Pagination parameters
+    page = int(request.args.get('page'))
+    page_size = int(request.args.get('page_size'))
+    offset = (page - 1) * page_size
+
+    # Get the total number of records
+    total_records = DATASETS.count_documents({})
+
+    # Get the data for the current page
+    data = DATASETS.find({}, {'_id': 0}).skip(offset).limit(page_size)
+
+    # Create the response object
+    response = {
+        'data': list(data),
+        'page': page,
+        'page_size': page_size,
+        'total_records': total_records
+    }
+
+    return jsonify(response)

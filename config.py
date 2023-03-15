@@ -20,3 +20,4 @@ class Config:
     MULTIPLIER_HTML = os.getenv("MULTIPLIER_HTML")
     MULTIPLIER_TEXT = os.getenv("MULTIPLIER_TEXT")
     MINIMUM_SCORE = os.getenv("MINIMUM_SCORE")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")

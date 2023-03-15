@@ -7,6 +7,7 @@ import logging
 import sys
 from colargulog import ColorizedArgsFormatter
 from colargulog import BraceFormatStyleFormatter
+from flask_jwt_extended import JWTManager
 
 def init_logging():
     root_logger = logging.getLogger()
@@ -32,6 +33,7 @@ def create_app(config_class=Config):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
+    jwt = JWTManager(app)
     app.config.from_mapping(
         LOGGER=logger
     )
