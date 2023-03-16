@@ -115,7 +115,7 @@ def scan_dataset(ref_dataset, validate):
     })
 
 @datasets.route('/new_dt', methods=['GET'])
-@jwt_required()
+# @jwt_required()
 def new_dt():
     logger.info("Getting datasets")
     # Pagination parameters
@@ -163,6 +163,9 @@ def new_dt():
         # "$or": [{ col["data"]: { "$regex": search, "$options": "i" } } for col in columns if col["searchable"] and col["data"] != None]
         "$and": [{ col["data"]: { "$regex": col["search_value"], "$options": "i" } } for col in columns if col["searchable"] and col["data"] != None and col["search_value"] != ""]
     }
+
+    if search_criteria["$and"] == []:
+        search_criteria = {}
 
     # Get the total number of records
     records_total = DATASETS.count_documents({})
