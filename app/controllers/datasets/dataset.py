@@ -30,7 +30,7 @@ def protected():
     return "Hellow"
 
 @datasets.route('/<ref_dataset>', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 def update_dataset(ref_dataset):
     logger.info("Validating dataset")
     data = request.get_json()
@@ -115,7 +115,7 @@ def scan_dataset(ref_dataset, validate):
     })
 
 @datasets.route('/new_dt', methods=['GET'])
-# @jwt_required()
+@jwt_required()
 def new_dt():
     logger.info("Getting datasets")
     # Pagination parameters
