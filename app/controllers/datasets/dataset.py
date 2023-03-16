@@ -116,7 +116,7 @@ def scan_dataset(ref_dataset, validate):
 
 @datasets.route('/new_dt', methods=['GET'])
 @jwt_required()
-def get_datasets():
+def new_dt():
     logger.info("Getting datasets")
     # Pagination parameters
     draw = int(request.args.get('draw'))
