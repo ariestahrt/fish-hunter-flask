@@ -71,7 +71,7 @@ def update_dataset(ref_dataset):
         tweetText += "\n#phishing #alert #scam #scampage"
 
         # download image
-        img_data = requests.get(ds["screenshot_path"]).content
+        img_data = requests.get(ds["screenshot"]["index"]).content
         temp_image_path = f"/tmp/{str(ds['_id'])}.jpg"
         with open(temp_image_path, 'wb') as handler:
             handler.write(img_data)
