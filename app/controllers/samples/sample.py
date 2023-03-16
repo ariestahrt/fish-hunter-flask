@@ -45,7 +45,7 @@ def create_sample():
             "css": f_css,
             "html": f_html
         },
-        "screenshot_path": ds["screenshot_path"],
+        "screenshot": ds["screenshot"],
         "created_at": datetime.now(),
         "updated_at": None,
         "deleted_at": None

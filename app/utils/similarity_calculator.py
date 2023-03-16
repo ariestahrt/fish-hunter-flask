@@ -47,11 +47,11 @@ def calculate_similarity(f_text, f_html, f_css, lang):
         by_cosine = cosine_similarity(f_text, sample_text)
 
         # Calculate by LCS
-        by_lcs = calculate_by_lcs(f_text, sample_text)
+        # by_lcs = calculate_by_lcs(f_text, sample_text)
 
         FINAL_CSS_SCORE = max(css_score[0], css_score[1])
         FINAL_HTML_SCORE = html_score
-        FINAL_TEXT_SCORE = max(by_ngram, by_ngram1, by_cosine, by_lcs)
+        FINAL_TEXT_SCORE = max(by_ngram, by_ngram1, by_cosine)
 
         FINAL_SCORE = FINAL_CSS_SCORE*MULTIPLIER_CSS + FINAL_HTML_SCORE*MULTIPLIER_HTML + FINAL_TEXT_SCORE*MULTIPLIER_TEXT
 
