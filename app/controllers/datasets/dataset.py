@@ -34,8 +34,7 @@ def protected():
 def update_dataset_put(ref_dataset):
     logger.info("Updating dataset [PUT]")
     data = request.get_json()
-    brands = data["brands"].split(",")
-    brands = [brand.strip() for brand in brands]
+    brands = data["brands"]
 
     # update dataset info
     DATASETS.update_one({"_id": ObjectId(ref_dataset)}, {
@@ -44,6 +43,8 @@ def update_dataset_put(ref_dataset):
             "updated_at": datetime.now()
         }
     })
+
+    return json.dumps({"status": "success"})
 
 @datasets.route('/<ref_dataset>', methods=['POST'])
 # @jwt_required()
