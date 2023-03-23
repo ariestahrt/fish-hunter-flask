@@ -169,6 +169,11 @@ def update_sample(sample_id):
         "type": data["type"]
     }})
 
+    return json.dumps({
+        "status": "success",
+        "data": None
+    })
+
 @samples.route("/<sample_id>", methods=['DELETE'])
 @jwt_required()
 def delete_sample(sample_id):
