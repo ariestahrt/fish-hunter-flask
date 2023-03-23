@@ -18,6 +18,14 @@ DATASETS = DB["datasets"]
 SAMPLES = DB["samples"]
 MINIMUM_SCORE = float(current_app.config["MINIMUM_SCORE"])
 
+# Enable CORS
+@datasets.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', '*')
+    return response
+
 # middleware
 @datasets.before_request
 def before_request():

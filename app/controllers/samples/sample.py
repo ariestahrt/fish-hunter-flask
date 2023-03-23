@@ -15,6 +15,14 @@ DB = current_app.config["DB"]
 SAMPLES = DB["samples"]
 DATASETS = DB["datasets"]
 
+# Enable CORS
+@samples.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', '*')
+    return response
+
 @samples.route("", methods=['GET'])
 @jwt_required()
 def get_samples():
