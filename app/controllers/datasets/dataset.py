@@ -293,4 +293,8 @@ def invalidate_datasets():
     ids = data['ids']
     for i in ids:
         DATASETS.update_one({'_id': ObjectId(i)}, {'$set': {'status': 'invalid'}})
-    return "OK"
+    
+    return json.dumps({
+        "status": "success",
+        "data": "ok"
+    })
