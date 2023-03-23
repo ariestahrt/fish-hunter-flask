@@ -47,7 +47,7 @@ def update_dataset_put(ref_dataset):
     return json.dumps({"status": "success"})
 
 @datasets.route('/<ref_dataset>', methods=['POST'])
-# @jwt_required()
+@jwt_required()
 def update_dataset(ref_dataset):
     logger.info("Validating dataset")
     data = request.get_json()

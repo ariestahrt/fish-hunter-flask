@@ -7,6 +7,7 @@ import json
 from bson.objectid import ObjectId
 import requests
 import pymongo
+from flask_jwt_extended import jwt_required
 
 logger = current_app.config["LOGGER"]
 samples = Blueprint('samples', __name__, url_prefix='/api/v1/samples')
@@ -15,6 +16,7 @@ SAMPLES = DB["samples"]
 DATASETS = DB["datasets"]
 
 @samples.route("", methods=['GET'])
+@jwt_required()
 def get_samples():
     logger.info("Getting datasets")
     # Pagination parameters
@@ -88,6 +90,7 @@ def get_samples():
     return json.dumps(response, default=str)
 
 @samples.route("", methods=['POST'])
+@jwt_required()
 def create_sample():
     logger.info("Creating sample")
     data = request.get_json()
@@ -125,11 +128,58 @@ def create_sample():
         "deleted_at": None
     })
 
+    # get jwt token
+    token = request.headers.get("Authorization").split(" ")[1]
+    headers = {"Authorization": "Bearer " + token}
+
     # create api request to validate ds
-    requests.post("http://localhost:8080/api/v1/datasets/" + ref_dataset, json={"status": "valid", "is_tweeted": True})
+    requests.post("http://localhost:8080/api/v1/datasets/" + ref_dataset, json={"status": "valid", "is_tweeted": True}, headers=headers)
 
     # convert to json
     return json.dumps({
         "status": "success",
         "data": "ok"
+    })
+
+@samples.route("/<sample_id>", methods=['GET'])
+@jwt_required()
+def get_sample(sample_id):
+    sample = SAMPLES.find_one({"_id": ObjectId(sample_id)})
+    return json.dumps({
+        "status": "success",
+        "data": sample
+    })
+
+@samples.route("/<sample_id>", methods=['PUT'])
+@jwt_required()
+def update_sample(sample_id):
+    data = request.get_json()
+    SAMPLES.update_one({"_id": ObjectId(sample_id)}, {"$set": {
+        "brands": data["brands"],
+        "language": data["language"] if data.get("language") != None else "en",
+        "details": data["details"],
+        "type": data["type"]
+    }})
+
+@samples.route("/<sample_id>", methods=['DELETE'])
+@jwt_required()
+def delete_sample(sample_id):
+    # delete sampel
+    SAMPLES.delete_one({"_id": ObjectId(sample_id)})
+    return json.dumps({
+        "status": "success",
+        "data": None
+    })
+
+# delete mass
+@samples.route("/delete_mass", methods=['POST'])
+@jwt_required()
+def delete_mass():
+    data = request.get_json()
+    for sample_id in data["ids"]:
+        SAMPLES.delete_one({"_id": ObjectId(sample_id)})
+    
+    return json.dumps({
+        "status": "success",
+        "data": None
     })
