@@ -158,8 +158,23 @@ def new_dt():
             break
         col_idx += 1
     
+    asset_criteria = None
     columns = []
     for i in range(col_idx):
+        if request.args.get(f'columns[{i}][data]') == 'assets_downloaded':
+            if request.args.get(f'columns[{i}][search][value]') != "":
+                if request.args.get(f'columns[{i}][search][value]')[0] == ">":
+                    asset_criteria = {
+                        "operator": "$gte",
+                        "value": float(request.args.get(f'columns[{i}][search][value]')[1:])
+                    }
+                elif request.args.get(f'columns[{i}][search][value]')[0] == "<":
+                    asset_criteria = {
+                        "operator": "$lte",
+                        "value": float(request.args.get(f'columns[{i}][search][value]')[1:])
+                    }
+            continue
+
         columns.append({
             "data": request.args.get(f'columns[{i}][data]') if request.args.get(f'columns[{i}][data]') != "" else None,
             "name": request.args.get(f'columns[{i}][name]'),
@@ -184,13 +199,15 @@ def new_dt():
         })
 
     # create the query
-    search_criteria = {
-        # "$or": [{ col["data"]: { "$regex": search, "$options": "i" } } for col in columns if col["searchable"] and col["data"] != None]
-        "$and": [{ col["data"]: { "$regex": col["search_value"], "$options": "i" } } for col in columns if col["searchable"] and col["data"] != None and col["search_value"] != ""]
-    }
+    if asset_criteria != None:
+        search_criteria = {
+            "assets_downloaded": {asset_criteria["operator"]: asset_criteria["value"]},
+            # "$or": [{ col["data"]: { "$regex": search, "$options": "i" } } for col in columns if col["searchable"] and col["data"] != None]
+            "$and": [{ col["data"]: { "$regex": col["search_value"], "$options": "i" } } for col in columns if col["searchable"] and col["data"] != None and col["search_value"] != ""]
+        }
 
     if search_criteria["$and"] == []:
-        search_criteria = {}
+        del search_criteria["$and"]
 
     # Get the total number of records
     records_total = DATASETS.count_documents({})
