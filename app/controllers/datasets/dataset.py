@@ -197,7 +197,8 @@ def new_dt():
             "column": int(request.args.get(f'order[{i}][column]')),
             "dir": request.args.get(f'order[{i}][dir]')
         })
-
+    
+    search_criteria = {}
     # create the query
     if asset_criteria != None:
         search_criteria = {
