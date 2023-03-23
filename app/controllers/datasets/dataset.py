@@ -283,3 +283,14 @@ def get_datasets(status):
     }
 
     return json.dumps(response, default=str)
+
+# invalidate mass
+@datasets.route('/invalidate', methods=['POST'])
+@jwt_required()
+def invalidate_datasets():
+    logger.info("Invalidating datasets")
+    data = request.get_json()
+    ids = data['ids']
+    for i in ids:
+        DATASETS.update_one({'_id': ObjectId(i)}, {'$set': {'status': 'invalid'}})
+    return "OK"
