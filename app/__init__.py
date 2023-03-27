@@ -52,5 +52,7 @@ def create_app(config_class=Config):
     app.register_blueprint(sample.samples)
     from app.controllers.chrome_api import chrome_api
     app.register_blueprint(chrome_api.chrome_api)
+    from app.controllers.legits import legits
+    app.register_blueprint(legits.legits)
 
     return app
