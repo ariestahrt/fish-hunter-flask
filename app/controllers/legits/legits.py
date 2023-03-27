@@ -14,7 +14,7 @@ from flask_jwt_extended import jwt_required
 logger = current_app.config["LOGGER"]
 legits = Blueprint('legits', __name__, url_prefix='/api/v1/legits')
 DB = current_app.config["DB"]
-LEGITS = DB["legits"]
+LEGITS = DB["legit_url"]
 SAMPLES = DB["samples"]
 MINIMUM_SCORE = float(current_app.config["MINIMUM_SCORE"])
 
