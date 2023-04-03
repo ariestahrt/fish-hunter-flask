@@ -147,3 +147,18 @@ def delete_legit(ref_id):
         "message": "Updated successfully",
         "data": "ok"
     })
+
+# Update a legit
+@legits.route('/<ref_id>', methods=['PUT'])
+@jwt_required()
+def update_legit(ref_id):
+    logger.info("Updating legit")
+    data = request.get_json()
+
+    # Update the legit
+    LEGITS.update_one({"_id": ObjectId(ref_id)}, {"$set": data})
+    return json.dumps({
+        "status": "success",
+        "message": "Updated successfully",
+        "data": "ok"
+    })
