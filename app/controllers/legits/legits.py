@@ -162,3 +162,20 @@ def update_legit(ref_id):
         "message": "Updated successfully",
         "data": "ok"
     })
+
+# Update mass legit
+@legits.route('/update', methods=['POST'])
+@jwt_required()
+def update_mass_legit():
+    logger.info("Updating mass legit")
+    data = request.get_json()
+    ids = data['ids']
+    status = data['status']
+    for i in ids:
+        LEGITS.update_one({'_id': ObjectId(i)}, {'$set': {'status': status}})
+    
+    return json.dumps({
+        "status": "success",
+        "message": "Updated successfully",
+        "data": "ok"
+    })
