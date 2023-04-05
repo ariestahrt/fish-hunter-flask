@@ -314,12 +314,31 @@ def update_datasets():
     logger.info("Updating many datasets")
     data = request.get_json()
     ids = data['ids']
-    status = data['status']
-    for i in ids:
-        DATASETS.update_one({'_id': ObjectId(i)}, {'$set': {'status': status}})
+
+    if data.get('status') != None:
+        status = data['status']
+        for i in ids:
+            DATASETS.update_one({'_id': ObjectId(i)}, {'$set': {'status': status}})
+        
+        return json.dumps({
+            "status": "success",
+            "message": "Updated successfully",
+            "data": "ok"
+        })
+
+    if data.get('brands') != None:
+        brands = data['brands']
+        for i in ids:
+            DATASETS.update_one({'_id': ObjectId(i)}, {'$set': {'brands': brands}})
+        
+        return json.dumps({
+            "status": "success",
+            "message": "Updated successfully",
+            "data": "ok"
+        })
     
     return json.dumps({
-        "status": "success",
-        "message": "Updated successfully",
+        "status": "error",
+        "message": "No data to update",
         "data": "ok"
     })
