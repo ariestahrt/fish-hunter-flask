@@ -340,7 +340,7 @@ def update_datasets():
     if data.get('lang') != None:
         lang = data['lang']
         for i in ids:
-            DATASETS.update_one({'_id': ObjectId(i)}, {'$set': {'lang': lang}})
+            DATASETS.update_one({'_id': ObjectId(i)}, {'$set': {'language': lang}})
         
         return json.dumps({
             "status": "success",
