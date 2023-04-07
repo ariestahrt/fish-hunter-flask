@@ -337,6 +337,17 @@ def update_datasets():
             "data": "ok"
         })
     
+    if data.get('lang') != None:
+        lang = data['lang']
+        for i in ids:
+            DATASETS.update_one({'_id': ObjectId(i)}, {'$set': {'lang': lang}})
+        
+        return json.dumps({
+            "status": "success",
+            "message": "Updated successfully",
+            "data": "ok"
+        })
+    
     return json.dumps({
         "status": "error",
         "message": "No data to update",
