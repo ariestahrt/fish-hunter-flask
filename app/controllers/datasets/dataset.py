@@ -280,6 +280,9 @@ def get_datasets(status):
             "dir": request.args.get(f'order[{i}][dir]')
         })
 
+    order_field = columns[order[0]["column"]]["data"]
+    order_dir = pymongo.DESCENDING if order[0]["dir"] == "desc" else pymongo.ASCENDING
+
     # create the query
     search_criteria = {
         "status": status,
@@ -291,11 +294,7 @@ def get_datasets(status):
     records_filtered = DATASETS.count_documents(search_criteria)
 
     # Get the data for the current page
-    data = DATASETS.find(search_criteria, {'whois_lookup_text': 0}).skip(offset).limit(page_size)
-    
-    # sort the data
-    for o in order:
-        data = data.sort(columns[o["column"]]["data"], pymongo.DESCENDING if o["dir"] == "desc" else pymongo.ASCENDING)
+    data = DATASETS.find(search_criteria, {'whois_lookup_text': 0}).sort(order_field, order_dir).skip(offset).limit(page_size)
 
     # Create the response object
     response = {
