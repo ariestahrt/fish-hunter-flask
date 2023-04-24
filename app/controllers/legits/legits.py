@@ -66,7 +66,7 @@ def new_dt():
                         "operator": "$lte",
                         "value": float(request.args.get(f'columns[{i}][search][value]')[1:])
                     }
-            continue
+            # continue
 
         columns.append({
             "data": request.args.get(f'columns[{i}][data]') if request.args.get(f'columns[{i}][data]') != "" else None,
